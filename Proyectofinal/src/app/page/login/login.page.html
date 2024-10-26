@@ -1,0 +1,37 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <div class="header-image">
+      <img src="assets/img/tellevofoto.png" alt="Header Image">
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="content">
+  <div class="login-container">
+    <div class="icon-circle">
+      <ion-icon name="person" class="user-icon"></ion-icon>
+    </div>
+    <ion-item class="input-item">
+      <ion-icon name="mail" slot="start" class="input-icon"></ion-icon>
+      <ion-input [(ngModel)]="email" label="Email" type="email" placeholder="✉️ email@domain.com"></ion-input>
+    </ion-item>
+    <ion-item class="input-item">
+      <ion-icon name="lock-closed" slot="start" class="input-icon"></ion-icon>
+      <ion-input [(ngModel)]="password" label="Password" type="password" placeholder="🔒 password"></ion-input>
+    </ion-item>
+    <ion-button (click)="login()" expand="block" class="login-button">Login</ion-button>
+
+    <ion-row class="action-links">
+      <ion-col>
+        <a [routerLink]="['/registrar']" class="link">Registrar</a>
+      </ion-col>
+      <ion-col>
+        <a [routerLink]="['/recuperar']" class="link">Recuperar</a>
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-content>
+
+<ion-footer class="footer">
+  <p>© 2024 cogollotecnology. todos los derechos reservados.</p>
+</ion-footer>

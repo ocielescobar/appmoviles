@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>    
+    <ion-title>TeLlevoAPP</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div id="map-container">
+    <google-map
+      width="100%"
+      height="100%"
+      [center]="center"
+      [zoom]="zoom">
+    </google-map>
+  </div>
+
+  <div class="button-container">
+    <ion-button (click)="goToCreateRide()" expand="block" color="primary" class="custom-button">Crear Viaje</ion-button>
+    <ion-button (click)="goToRideList()" expand="block" color="secondary" class="custom-button">Buscar Viajes</ion-button>
+  </div>
+</ion-content>

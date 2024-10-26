@@ -1,0 +1,40 @@
+<ion-app>
+  <ion-menu contentId="main-content" side="start" #menu>
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>TeLlevoAPP</ion-title>
+      </ion-toolbar>
+      <!-- Menú Header con el correo del usuario -->
+      <ion-toolbar>
+        <p>Bienvenido: </p>
+        <ion-label class="email-display">{{ email }}</ion-label>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-list>
+        <ion-item routerLink="/home" routerDirection="root" (click)="closeMenu()">
+          <ion-icon name="home" slot="start"></ion-icon>
+          <ion-label>Inicio</ion-label>
+        </ion-item>
+        <ion-item routerLink="/ride-list" routerDirection="forward" (click)="closeMenu()">
+          <ion-icon name="car" slot="start"></ion-icon>
+          <ion-label>Lista de Viajes</ion-label>
+        </ion-item>
+        <ion-item routerLink="/create-ride" routerDirection="forward" (click)="closeMenu()">
+          <ion-icon name="add-circle" slot="start"></ion-icon>
+          <ion-label>Crear Viaje</ion-label>
+        </ion-item>
+        <ion-item routerLink="/profile" routerDirection="forward" (click)="closeMenu()">
+          <ion-icon name="person" slot="start"></ion-icon>
+          <ion-label>Perfil</ion-label>
+        </ion-item>
+        <ion-item (click)="logout(); closeMenu()">
+          <ion-icon name="log-out" slot="start"></ion-icon>
+          <ion-label>Cerrar sesión</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+  
+  <ion-router-outlet id="main-content"></ion-router-outlet>
+</ion-app>

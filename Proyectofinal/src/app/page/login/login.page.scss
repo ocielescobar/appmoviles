@@ -1,0 +1,54 @@
+.content {
+  --background: #000000; /* Fondo negro */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  background: #333333; /* Fondo gris oscuro */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  padding: 20px;
+}
+
+.icon-circle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.user-icon {
+  font-size: 60px;
+  color: #007bff;
+  background-color: #ffffff; /* Fondo blanco para el círculo */
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.input-item {
+  margin: 10px 0;
+  --padding-start: 20px;
+}
+
+.input-icon {
+  color: #007bff;
+}
+
+.login-button {
+  margin-top: 20px;
+  --background: #007bff;
+  --color: #fff;
+}
+
+.footer {
+  text-align: center;
+  padding: 10px;
+  background: #007bff;
+  color: #fff;
+}
