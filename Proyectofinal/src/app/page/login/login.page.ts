@@ -23,8 +23,8 @@ export class LoginPage implements OnInit {
     try {
       let usuario=await this.firebase.auth(this.email,this.password);
       this.tokenID=await usuario.user?.getIdToken();
-      console.log(usuario);
-      console.log(this.tokenID=await usuario.user?.getIdToken());
+      //console.log(usuario);
+      //console.log(this.tokenID=await usuario.user?.getIdToken());
       const navigationextras:NavigationExtras = {
         queryParams: {email:this.email, password:this.password, valor: 9999}
       };

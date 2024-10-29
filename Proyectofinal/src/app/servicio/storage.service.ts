@@ -11,42 +11,22 @@ export class StorageService {
   constructor() { }
 
   async getItem(key: string): Promise<string | null> {
-
-    try {
+    try { 
+      const obj = await Preferences.get({ key }); 
+      return obj.value; 
+    } catch (error) { 
+      console.error(`Error obteniendo el item con la llave ${key}:`, error); 
+      return null; 
+    } 
+  } 
  
-      const obj = await Preferences.get({ key });
+  private async setItem(key:string,valor:string){ 
+    await Preferences.set({key:key,value:valor}); 
+  } 
  
-      return obj.value;
- 
-    } catch (error) {
- 
-      console.error(`Error obteniendo el item con la llave ${key}:`, error);
- 
-      return null;
- 
-    }
- 
-  }
- 
- 
- 
-  private async setItem(key:string,valor:string){
- 
-    await Preferences.set({key:key,value:valor});
- 
-  }
- 
- 
- 
-  private async removeItem(key:string){
- 
-    await Preferences.remove({key:key});
- 
-  }
-
-    async agregarStorage(data:any){
-      this.setItem(llave,JSON.stringify(data))
-    }
+  private async removeItem(key:string){ 
+    await Preferences.remove({key:key}); 
+  }    
   
   async obtenerStorage(){
     const data=await this.getItem (llave);
@@ -55,5 +35,9 @@ export class StorageService {
     } else{
       return JSON.parse(data);
     }
+  }
+
+  async agregarStorage(data:any){
+    this.setItem(llave,JSON.stringify(data))
   }
 }

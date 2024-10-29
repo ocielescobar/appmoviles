@@ -1,5 +1,5 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>    
+  <ion-toolbar>
     <ion-title>TeLlevoAPP</ion-title>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
@@ -8,6 +8,8 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <input #searchBox id="search-box" type="text" placeholder="Busca un lugar" (input)="onInput()">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBs3njaGnyZ1ftTsu_ezdLixZzzMW2-rsA&libraries=places" async defer></script>
   <div id="map-container">
     <google-map
       width="100%"
@@ -18,6 +20,7 @@
   </div>
 
   <div class="button-container">
+    <ion-button (click)="getCurrentLocation()" expand="block" color="tertiary" class="custom-button">Ubicación Actual</ion-button> <!-- Botón de ubicación -->
     <ion-button (click)="goToCreateRide()" expand="block" color="primary" class="custom-button">Crear Viaje</ion-button>
     <ion-button (click)="goToRideList()" expand="block" color="secondary" class="custom-button">Buscar Viajes</ion-button>
   </div>

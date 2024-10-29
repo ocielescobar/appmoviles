@@ -14,7 +14,7 @@ export class FirebaseService {
   }
 
   async registrar(email:string, password:string){
-    const request=await this.firebase.createUserWithEmailAndPassword(email,password);
+    const request=await this.firebase.createUserWithEmailAndPassword(email, password);
     return request
   }
 

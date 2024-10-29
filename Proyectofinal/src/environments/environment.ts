@@ -12,7 +12,8 @@ export const environment = {
     messagingSenderId: "740935565041",
     appId: "1:740935565041:web:d8e16f98e464aaf07cf350",
     measurementId: "G-XB8ZY4M5G3"
-  }
+  },
+  apiUrl:"https://uber-nodejs-server-git-d61f89-guillermovillacuratorres-projects.vercel.app/api/" //uber.matiivilla.cl
 };
 
 /*

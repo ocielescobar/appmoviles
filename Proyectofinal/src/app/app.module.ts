@@ -9,9 +9,7 @@ import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { environment } from 'src/environments/environment';
 import { GoogleMapsModule } from '@angular/google-maps'; // Importa GoogleMapsModule
 import { MenuController } from '@ionic/angular/common';
-
-
-
+import { provideHttpClient } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
@@ -22,8 +20,9 @@ import { MenuController } from '@ionic/angular/common';
     AngularFireAuthModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     GoogleMapsModule, // Añádelo aquí
+   // MenuController,
   ],
-  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }],
+  providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, provideHttpClient()],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
