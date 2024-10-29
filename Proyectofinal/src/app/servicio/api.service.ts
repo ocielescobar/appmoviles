@@ -53,7 +53,7 @@ export class ApiService {
         formData.append('image_usuario', imagefile, imagefile.name);
       }
       const response = await lastValueFrom(
-        this.http.post<any>(environment.apiUrl + 'user/agregar/', formData)
+        this.http.post<any>(environment.apiUrl + 'user/agregar', formData)
       );
       return response;
     } catch (error) {
