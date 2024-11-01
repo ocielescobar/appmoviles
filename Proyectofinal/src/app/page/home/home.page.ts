@@ -22,7 +22,9 @@ export class HomePage implements OnInit {
       setTimeout(() => {
         this.initMap(); // Inicializa el mapa después de un breve retraso
         this.initAutocomplete(); // Inicializa la autocompletación
+        this.setupSearchBoxListener();
       }, 100); // Pequeño retraso para asegurar que el DOM esté listo
+      
     });
   }
 
@@ -42,17 +44,13 @@ export class HomePage implements OnInit {
   loadGoogleMaps(): Promise<void> {
     return new Promise((resolve, reject) => {
       if ((window as any).google && (window as any).google.maps) {
-        this.initMap(); // Inicializa el mapa aquí
         resolve();
       } else {
         const script = document.createElement('script');
-        script.src = 'https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places';
-        script.async = true;
-        script.defer = true;
-        script.onload = () => {
-          this.initMap(); // Inicializa el mapa cuando la API se haya cargado
-          resolve();
-        };
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBs3njaGnyZ1ftTsu_ezdLixZzzMW2-rsA&libraries=places';
+        script.async = true; // Carga asincrónica
+        script.defer = true; // Defer para asegurar que se ejecute después de que el documento haya sido parseado
+        script.onload = () => resolve();
         script.onerror = () => reject('Google Maps API failed to load');
         document.head.appendChild(script);
       }
@@ -126,6 +124,23 @@ export class HomePage implements OnInit {
     });
   }
   
+  setupSearchBoxListener() {
+    const input = this.searchBox.nativeElement;
+    input.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        event.preventDefault(); // Evitar el comportamiento predeterminado
+        const place = this.autocomplete.getPlace();
+      }
+    });
+  }
+  addMarker(location: google.maps.LatLng | google.maps.LatLngLiteral) {
+    const marker = new google.maps.marker.AdvancedMarkerElement({
+      position: location,
+      map: this.map,
+      title: 'Ubicación Seleccionada', // Puedes personalizar el título
+      // Puedes agregar otras propiedades como iconos, etc.
+    });
+  }
   
 
   onInput() {
@@ -159,6 +174,7 @@ export class HomePage implements OnInit {
       alert('La geolocalización no es soportada por este navegador.');
     }
   }
+  
 
   goToAddVehicle() {
     this.router.navigateByUrl('/add-vehicle');
