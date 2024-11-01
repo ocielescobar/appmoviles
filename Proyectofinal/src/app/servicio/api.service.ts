@@ -60,6 +60,13 @@ export class ApiService {
       throw error;
     }
   }
+  agregarVehiculo(data: any, image: File) {
+    const formData = new FormData();
+    Object.keys(data).forEach(key => formData.append(key, data[key]));
+    formData.append('image', image);
+  
+    return this.http.post('vehiculo/agregar', formData).toPromise();
+  }  
 }
 
 interface bodyUser{

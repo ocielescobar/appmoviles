@@ -1,0 +1,42 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Agregar Vehículo</ion-title> 
+  <ion-buttons slot="end">
+    <ion-back-button defaultHref="/home"></ion-back-button>
+  </ion-buttons>
+</ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="addVehicle()">
+    <ion-item>
+      <ion-label>Patente</ion-label>
+      <ion-input [(ngModel)]="patente" name="patente" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Marca</ion-label>
+      <ion-input [(ngModel)]="marca" name="marca" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Modelo</ion-label>
+      <ion-input [(ngModel)]="modelo" name="modelo" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Año</ion-label>
+      <ion-input type="number" [(ngModel)]="anio" name="anio" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Color</ion-label>
+      <ion-input [(ngModel)]="color" name="color" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Combustible</ion-label>
+      <ion-input [(ngModel)]="tipoCombustible" name="tipoCombustible" required></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label>Imagen</ion-label>
+      <input type="file" (change)="onFileChange($event)" />
+    </ion-item>
+    <ion-button type="submit">Agregar Vehículo</ion-button>
+  </form>
+</ion-content>

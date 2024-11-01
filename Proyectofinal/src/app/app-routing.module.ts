@@ -53,10 +53,13 @@ const routes: Routes = [
     loadChildren: () => import('./page/profile/profile.module').then(m => m.ProfilePageModule)
   },
   {
+    path: 'add-vehicle',
+    loadChildren: () => import('./page/add-vehicle/add-vehicle.module').then(m => m.AddVehiclePageModule)
+  },
+  {
     path: '**',
     component: PageNotFoundComponent
-  }
-
+  },
 ];
 
 @NgModule({
