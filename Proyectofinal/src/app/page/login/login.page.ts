@@ -28,7 +28,7 @@ export class LoginPage implements OnInit {
       const navigationextras:NavigationExtras = {
         queryParams: {email:this.email, password:this.password, valor: 9999}
       };
-      
+      this.Storage1();
       this.router.navigate(['/home'],navigationextras);
     } catch (error) {
       console.log(error);
@@ -46,9 +46,9 @@ export class LoginPage implements OnInit {
   }
 
   async Storage1(){
-    const jsonToken:any={
-      token:this.tokenID
-    }
+    const jsonToken:any=[{
+      "token":this.tokenID,
+    }];
     this.storage.agregarStorage(jsonToken);
     console.log("Obtener", await this.storage.obtenerStorage());
   }
