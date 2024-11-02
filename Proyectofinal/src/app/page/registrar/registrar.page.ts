@@ -4,6 +4,7 @@ import { AlertController } from '@ionic/angular';
 import { ApiService } from 'src/app/servicio/api.service';
 import { NavController } from '@ionic/angular';
 import { FirebaseService } from 'src/app/servicio/firebase.service';
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 @Component({
   selector: 'app-registrar',
@@ -27,7 +28,7 @@ export class RegistrarPage implements OnInit {
   password: string = '';
 
   archivoImagen: File | null = null;
-
+  public imagen: string | null = null;
 
   ngOnInit() {
   }
@@ -72,5 +73,20 @@ export class RegistrarPage implements OnInit {
 
 atras() {
   this.navCtrl.back();
+}
+async tomarFoto() {
+  try {
+    const image = await Camera.getPhoto({
+      quality: 90,
+      allowEditing: false,
+      resultType: CameraResultType.DataUrl,
+      source: CameraSource.Prompt, // Permite seleccionar o tomar una foto
+    });
+
+    this.imagen = image.dataUrl || null; // Asigna la dataUrl o null
+    console.log('Foto tomada:', this.imagen);
+  } catch (error) {
+    console.error('Error al tomar la foto:', error);
+  }
 }
 }

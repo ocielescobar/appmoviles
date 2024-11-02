@@ -3,36 +3,46 @@
     <div>
       <img src="assets/img/tellevofoto.png" alt="Header Image">
     </div>
-</ion-toolbar>
+  </ion-toolbar>
+</ion-header>
 
-<ion-item>
-  <ion-icon name="person" slot="start" class="input-icon"></ion-icon>
-  <ion-input [(ngModel)]="nombre" label="Nombre" type="text"placeholder=""> </ion-input>
-</ion-item> 
+<ion-content>
+  <!-- Otros campos de formulario -->
+  <ion-item>
+    <ion-icon name="person" slot="start" class="input-icon"></ion-icon>
+    <ion-input [(ngModel)]="nombre" label="Nombre" type="text" placeholder=""></ion-input>
+  </ion-item>
 
-<ion-item>
-  <ion-icon name="call" slot="start" class="input-icon"></ion-icon>
-  <ion-input [(ngModel)]="telefono" label="Telefono" type="tel"placeholder=""> </ion-input>
-</ion-item> 
+  <ion-item>
+    <ion-icon name="call" slot="start" class="input-icon"></ion-icon>
+    <ion-input [(ngModel)]="telefono" label="Teléfono" type="tel" placeholder=""></ion-input>
+  </ion-item>
 
-<ion-item>
-  <ion-icon name="mail" slot="start" class="input-icon"></ion-icon>
-  <ion-input [(ngModel)]="email" label="Email" type="email"placeholder=""> </ion-input>
-</ion-item> 
+  <ion-item>
+    <ion-icon name="mail" slot="start" class="input-icon"></ion-icon>
+    <ion-input [(ngModel)]="email" label="Email" type="email" placeholder=""></ion-input>
+  </ion-item>
 
-<ion-item>
-  <ion-icon name="lock-closed" slot="start" class="input-icon"></ion-icon>
-  <ion-input [(ngModel)]="password" label="Password" type="password"value=""> </ion-input>
-</ion-item>
+  <ion-item>
+    <ion-icon name="lock-closed" slot="start" class="input-icon"></ion-icon>
+    <ion-input [(ngModel)]="password" label="Contraseña" type="password" placeholder=""></ion-input>
+  </ion-item>
 
-<ion-item>
-  <input type="file" (change)="onFileChange($event)" />
-</ion-item>
+  <!-- Botón para seleccionar o tomar una foto -->
+  <ion-button (click)="tomarFoto()" expand="block" color="primary">
+    Seleccionar o Tomar Foto
+  </ion-button>
 
-<ion-button (click)="registrar()"expand="block">Registrar</ion-button>
-<ion-button (click)="atras()"expand="block">Volver</ion-button>
-  </ion-header>
+  <!-- Muestra la imagen seleccionada -->
+  <ion-item *ngIf="imagen">
+    <img [src]="imagen" alt="Foto seleccionada" style="width: 100px; height: 100px; border-radius: 8px;"/>
+  </ion-item>
 
-  <ion-footer class="footer">
-    <p>© 2024 cogollotecnology. todos los derechos reservados.</p>
-  </ion-footer>
+  <!-- Botones de acción -->
+  <ion-button (click)="registrar()" expand="block" color="success">Registrar</ion-button>
+  <ion-button (click)="atras()" expand="block" color="medium">Volver</ion-button>
+</ion-content>
+
+<ion-footer class="footer">
+  <p>© 2024 CogolloTechnology. Todos los derechos reservados.</p>
+</ion-footer>
