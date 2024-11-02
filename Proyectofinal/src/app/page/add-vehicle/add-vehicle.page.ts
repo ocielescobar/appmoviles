@@ -13,7 +13,7 @@ import { FirebaseService } from 'src/app/servicio/firebase.service'; // Asegúra
 export class AddVehiclePage implements OnInit {
   email: string = "";
   usuario: UserModel[] = [];
-  id_usuario: number = 0;
+  id_usuario: number = 27;
   patente: string = "";
   marca: string = "";
   modelo: string = "";
@@ -62,44 +62,46 @@ export class AddVehiclePage implements OnInit {
       console.error("No se encontraron datos de almacenamiento o el token es indefinido.");
     }
   }
+  
   async registrarVehiculo() {
     try {
-      const localStorage = await this.storage.obtenerStorage();
-      const idUsuario = localStorage?.id;
-  
-      if (idUsuario) {
-        const data = {
-          p_id_usuario: 27,
-          p_patente: this.patente,
-          p_marca: this.marca,
-          p_modelo: this.modelo,
-          p_anio: this.anio,
-          p_color: this.color,
-          p_tipo_combustible: this.tipo_combustible,
-          token: localStorage.token
-        };
-  
-        // Verifica si archivoImagen no es null antes de hacer la llamada
-        if (this.archivoImagen) {
-          const response = await this.apiservice.agregarVehiculo(data, this.archivoImagen);
-          console.log("Respuesta del servidor:", response);
-        } else {
-          console.error("No se ha seleccionado ninguna imagen para el vehículo.");
+      const token = await this.firebase.getToken();
+        if (!token) {
+            throw new Error('Token no disponible');
         }
-      } else {
-        console.error("No se encontró el ID de usuario.");
-      }
+
+        // Crea un objeto con los datos del vehículo
+        const vehiculoData = {
+            p_id_usuario: 27, // Si el ID del usuario es fijo, usa '27', de lo contrario, usa this.idUsuario
+            p_patente: this.patente,
+            p_marca: this.marca,
+            p_modelo: this.modelo,
+            p_anio: this.anio,
+            p_color: this.color,
+            p_tipo_combustible: this.tipo_combustible,
+            token: token // Añade el token
+        };
+
+        // Verifica si hay una imagen para cargar
+        if (this.archivoImagen) { // Asegúrate de que this.archivoImagen contenga un archivo
+            const response = await this.apiservice.agregarVehiculo(vehiculoData, this.archivoImagen); // Envía los datos y el archivo
+            console.log('Vehículo registrado:', response);
+        } else {
+            // Manejo de error o lógica cuando no hay imagen
+            console.error('No se ha proporcionado una imagen para cargar.');
+            // Opcionalmente, podrías registrar el vehículo sin imagen aquí si es aceptable
+            // const response = await this.apiservice.agregarVehiculo(vehiculoData, null);
+        }
     } catch (error) {
-      console.error("Error al registrar el vehículo: ", error);
+        console.error('Error al registrar el vehículo:', error);
     }
-  }
+}
+
+
   
   onFileChange(event: any) {
     if (event.target.files.length > 0) {
       this.archivoImagen = event.target.files[0];
     }
   }
-}
-interface ApiResponse {
-  data?: UserModel[]; // Asegúrate de que esto coincida con la estructura real de tu respuesta
 }

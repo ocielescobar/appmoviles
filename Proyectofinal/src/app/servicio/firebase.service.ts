@@ -29,4 +29,8 @@ export class FirebaseService {
     const user = await this.firebase.currentUser;
     return !!user; // Devuelve true si hay un usuario, false si no
   }
+  async getToken(): Promise<string | null> {
+    const user = await this.firebase.currentUser;
+    return user ? user.getIdToken() : null; // Obtiene el token si el usuario está autenticado
+  }
 }
