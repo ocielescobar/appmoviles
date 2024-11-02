@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content>
-  <form (ngSubmit)="addVehicle()">
+  <form (ngSubmit)="registrarVehiculo()">
     <ion-item>
       <ion-label>Patente</ion-label>
       <ion-input [(ngModel)]="patente" name="patente" required></ion-input>
@@ -31,7 +31,7 @@
     </ion-item>
     <ion-item>
       <ion-label>Combustible</ion-label>
-      <ion-input [(ngModel)]="tipoCombustible" name="tipoCombustible" required></ion-input>
+      <ion-input [(ngModel)]="tipo_combustible" name="tipoCombustible" required></ion-input>
     </ion-item>
     <ion-item>
       <ion-label>Imagen</ion-label>

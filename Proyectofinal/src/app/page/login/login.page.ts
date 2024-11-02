@@ -14,28 +14,42 @@ export class LoginPage implements OnInit {
   password=""
   tokenID:any="";
 
-  constructor(private firebase:FirebaseService,private storage:StorageService, private router:Router, private alertcontroller:AlertController){ }
+  constructor(
+    private firebase:FirebaseService,
+    private storage:StorageService,
+     private router:Router,
+      private alertcontroller:AlertController,
+    ){ }
 
 
   ngOnInit() {
   }
-  async login(){
+  async login() {
     try {
-      let usuario=await this.firebase.auth(this.email,this.password);
-      this.tokenID=await usuario.user?.getIdToken();
-      //console.log(usuario);
-      //console.log(this.tokenID=await usuario.user?.getIdToken());
-      const navigationextras:NavigationExtras = {
-        queryParams: {email:this.email, password:this.password, valor: 9999}
+      let usuario = await this.firebase.auth(this.email, this.password);
+      this.tokenID = await usuario.user?.getIdToken();
+  
+      console.log("Usuario:", usuario);
+      console.log("Token:", this.tokenID); // Asegúrate de que este valor sea correcto
+  
+      // Almacena tanto el email como el token
+      const dataToStore = {
+        email: this.email,
+        token: this.tokenID // Almacena el token como cadena
       };
-      this.Storage1();
-      this.router.navigate(['/home'],navigationextras);
+  
+      await this.storage.agregarStorage(dataToStore); // Asegúrate de que este método esté almacenando correctamente
+  
+      const navigationextras: NavigationExtras = {
+        queryParams: { email: this.email, password: this.password, valor: 9999 }
+      };
+  
+      this.router.navigate(['/home'], navigationextras);
     } catch (error) {
-      console.log(error);
+      console.log("Error en login:", error);
       this.popAlert();
     }
   }
-
   async popAlert(){
     const alert = await this.alertcontroller.create({
       header:'Error',

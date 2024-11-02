@@ -25,4 +25,8 @@ export class FirebaseService {
   async logout(){
     await this.firebase.signOut();
   }
+  async isAuthenticated(): Promise<boolean> {
+    const user = await this.firebase.currentUser;
+    return !!user; // Devuelve true si hay un usuario, false si no
+  }
 }

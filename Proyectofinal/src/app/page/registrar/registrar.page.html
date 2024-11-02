@@ -4,31 +4,34 @@
       <img src="assets/img/tellevofoto.png" alt="Header Image">
     </div>
 </ion-toolbar>
-</ion-header>
-<ion-content [fullscreen]="true">
+
 <ion-item>
-  <ion-label position="floating">Nombre</ion-label>
-  <ion-input [(ngModel)]="nombre" type="text"></ion-input>
+  <ion-icon name="person" slot="start" class="input-icon"></ion-icon>
+  <ion-input [(ngModel)]="nombre" label="Nombre" type="text"placeholder=""> </ion-input>
 </ion-item> 
+
 <ion-item>
-  <ion-label position="floating">Mail</ion-label>
-  <ion-input [(ngModel)]="email"></ion-input>
+  <ion-icon name="call" slot="start" class="input-icon"></ion-icon>
+  <ion-input [(ngModel)]="telefono" label="Telefono" type="tel"placeholder=""> </ion-input>
 </ion-item> 
+
 <ion-item>
-  <ion-label position="floating">Telefono</ion-label>
-  <ion-input [(ngModel)]="telefono"></ion-input>
+  <ion-icon name="mail" slot="start" class="input-icon"></ion-icon>
+  <ion-input [(ngModel)]="email" label="Email" type="email"placeholder=""> </ion-input>
 </ion-item> 
+
 <ion-item>
-  <ion-label position="floating">Contraseña</ion-label>
-  <ion-input [(ngModel)]="password" type="password"value=""></ion-input>
+  <ion-icon name="lock-closed" slot="start" class="input-icon"></ion-icon>
+  <ion-input [(ngModel)]="password" label="Password" type="password"value=""> </ion-input>
 </ion-item>
+
 <ion-item>
   <input type="file" (change)="onFileChange($event)" />
-</ion-item> 
+</ion-item>
 
 <ion-button (click)="registrar()"expand="block">Registrar</ion-button>
 <ion-button (click)="atras()"expand="block">Volver</ion-button>
-</ion-content>
+  </ion-header>
 
   <ion-footer class="footer">
     <p>© 2024 cogollotecnology. todos los derechos reservados.</p>

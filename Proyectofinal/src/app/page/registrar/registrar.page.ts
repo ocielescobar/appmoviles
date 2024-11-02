@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { FirebaseService } from 'src/app/servicio/firebase.service';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
 import { ApiService } from 'src/app/servicio/api.service';
 import { NavController } from '@ionic/angular';
+import { FirebaseService } from 'src/app/servicio/firebase.service';
 
 @Component({
   selector: 'app-registrar',
@@ -11,23 +11,32 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./registrar.page.scss'],
 })
 export class RegistrarPage implements OnInit {
-  constructor(private allertController: AlertController, private navCtrl: NavController, private firebase:FirebaseService,private router:Router, private registraruser: ApiService) { }
+ 
+  constructor(
+    private navCtrl: NavController,
+    private firebase:FirebaseService,
+    private router:Router,
+    private crearuser: ApiService,
+    private alertcontroller: AlertController
+  ) { }
 
   nombre: string = '';
   email: string = '';
   telefono: string = '';
-  token: string = '';
+  token : string = '';
   password: string = '';
+
   archivoImagen: File | null = null;
 
-  ngOnInit() {}
 
-  async registrar() {
+  ngOnInit() {
+  }
+  async registrar(){
     try {
       let usuario = await this.firebase.registrar(this.email, this.password);
       const token = await usuario.user?.getIdToken();
       if (this.archivoImagen) {
-        const request = await this.registraruser.agregarUsuario(
+        const request = await this.crearuser.agregarUsuario(
           {
             p_correo_electronico: this.email,
             p_nombre: this.nombre,
@@ -43,25 +52,25 @@ export class RegistrarPage implements OnInit {
     } catch (error) {
       this.popAlert();
       console.log(error);
-    }
-  }
-atras() {
-  this.navCtrl.back();
-}
+    }
+  }
 
-  onFileChange(event:any) {
-    if(event.target.files.length > 0){
+  onFileChange(event: any) {
+    if (event.target.files.length >0){
       this.archivoImagen = event.target.files[0];
     }
   }
 
-  async popAlert() {
-    const alert = await this.allertController.create({
+  async popAlert(){
+    const alert = await this.alertcontroller.create({
       header: 'Error',
       message: 'Usuario o Contraseña incorrecta',
       buttons: ['OK'],
     });
     await alert.present();
   }
-  
+
+atras() {
+  this.navCtrl.back();
+}
 }
