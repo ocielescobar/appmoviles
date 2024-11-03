@@ -1,3 +1,4 @@
+import { ɵnormalizeQueryParams } from '@angular/common';
 import { StorageService } from './../../servicio/storage.service';
 import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
@@ -10,8 +11,8 @@ import { FirebaseService } from 'src/app/servicio/firebase.service';
 })
 export class LoginPage implements OnInit {
 
-  email=""
-  password=""
+  email: string ="";
+  password: string ="";
   tokenID:any="";
 
   constructor(
@@ -24,29 +25,19 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
   }
-  async login() {
+  async login(){
     try {
-      let usuario = await this.firebase.auth(this.email, this.password);
-      this.tokenID = await usuario.user?.getIdToken();
-  
-      console.log("Usuario:", usuario);
-      console.log("Token:", this.tokenID); // Asegúrate de que este valor sea correcto
-  
-      // Almacena tanto el email como el token
-      const dataToStore = {
-        email: this.email,
-        token: this.tokenID // Almacena el token como cadena
+      let usuario=await this.firebase.auth(this.email,this.password);
+      this.tokenID=await usuario.user?.getIdToken();
+      console.log(usuario);
+      console.log("TokenID",await usuario.user?.getIdToken());
+      const navigationExtras:NavigationExtras = {
+        queryParams: {email: this.email}
       };
-  
-      await this.storage.agregarStorage(dataToStore); // Asegúrate de que este método esté almacenando correctamente
-  
-      const navigationextras: NavigationExtras = {
-        queryParams: { email: this.email, password: this.password, valor: 9999 }
-      };
-  
-      this.router.navigate(['/home'], navigationextras);
+      this.Storage1();
+      this.router.navigate(['/home'], navigationExtras);
     } catch (error) {
-      console.log("Error en login:", error);
+      console.log(error);
       this.popAlert();
     }
   }
@@ -64,7 +55,7 @@ export class LoginPage implements OnInit {
       "token":this.tokenID,
     }];
     this.storage.agregarStorage(jsonToken);
-    console.log("Obtener", await this.storage.obtenerStorage());
+    console.log(await this.storage.obtenerStorage());
   }
 
 }

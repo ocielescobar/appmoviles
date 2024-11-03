@@ -9,6 +9,7 @@ const llave='llaveValor';
 })
 export class StorageService {
   storage1: any;
+  guardarStorage: any;
 
   constructor() { }
 
@@ -30,21 +31,16 @@ export class StorageService {
     await Preferences.remove({key:key}); 
   }    
   
-  async obtenerStorage() {
-    try {
-      const data = await this.getItem(llave); // Utiliza getItem para obtener el valor
-      return data ? JSON.parse(data) : null; // Maneja el JSON
-    } catch (error) {
-      console.error("Error al obtener almacenamiento:", error);
-      return null; // Manejo de errores
+  async obtenerStorage(){
+    const data = await this.getItem(llave);
+    if (data==null) {
+      return [];
+    } else {
+      return JSON.parse(data);
     }
   }
 
-  async agregarStorage(data: any) {
-    try {
-      await this.setItem(llave, JSON.stringify(data)); // Almacena el objeto como cadena JSON
-    } catch (error) {
-      console.error("Error al agregar datos al almacenamiento:", error);
-    }
+  async agregarStorage(data:any){
+    this.setItem(llave,JSON.stringify(data));
   }
 }

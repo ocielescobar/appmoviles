@@ -28,10 +28,13 @@
     <ion-input [(ngModel)]="password" label="Contraseña" type="password" placeholder=""></ion-input>
   </ion-item>
 
-  <!-- Botón para seleccionar o tomar una foto -->
-  <ion-button (click)="tomarFoto()" expand="block" color="primary">
-    Seleccionar o Tomar Foto
-  </ion-button>
+  <!-- Input para seleccionar una imagen -->
+  <ion-item>
+    <input type="file" (change)="onFileChange($event)" accept="image/*" style="display: none;" #fileInput />
+    <ion-button (click)="fileInput.click()" expand="block" color="primary">
+      Seleccionar o Tomar Foto
+    </ion-button>
+  </ion-item>
 
   <!-- Muestra la imagen seleccionada -->
   <ion-item *ngIf="imagen">

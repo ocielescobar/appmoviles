@@ -37,6 +37,6 @@
       <ion-label>Imagen</ion-label>
       <input type="file" (change)="onFileChange($event)" />
     </ion-item>
-    <ion-button type="submit">Agregar Vehículo</ion-button>
+    <ion-button (click)="registrarVehiculo()" expand="block">Agregar Vehículo</ion-button>
   </form>
 </ion-content>

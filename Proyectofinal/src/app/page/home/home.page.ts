@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { UserModel } from 'src/app/models/usuario';
+import { ApiService } from 'src/app/servicio/api.service';
 import { FirebaseService } from 'src/app/servicio/firebase.service';
+import { StorageService } from 'src/app/servicio/storage.service';
 
 @Component({
   selector: 'app-home',
@@ -8,6 +11,11 @@ import { FirebaseService } from 'src/app/servicio/firebase.service';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+
+  email: string="";
+  usuario:UserModel[]=[];
+  vehiculos:any[]=[];
+
   @ViewChild('searchBox', { static: true }) searchBox!: ElementRef;
   center: google.maps.LatLngLiteral = { lat: -33.5024, lng: -70.6130 }; // Coordenadas por defecto
   zoom = 8; // Nivel de zoom por defecto
@@ -15,9 +23,21 @@ export class HomePage implements OnInit {
   map!: google.maps.Map;
   marker!: google.maps.Marker;
 
-  constructor(private firebase: FirebaseService, private router: Router) {}
+  constructor(
+    private firebase: FirebaseService,
+    private router: Router,
+    private storage: StorageService,
+    private apiservice: ApiService,
+    private activate:ActivatedRoute,
+    ) {
+      this.activate.queryParams.subscribe(params => {
+        this.email = params['email'];
+        console.log(this.email)
+      })
+    }
 
   ngOnInit() {
+    this.cargarUsuario();
     this.loadGoogleMaps().then(() => {
       setTimeout(() => {
         this.initMap(); // Inicializa el mapa después de un breve retraso
@@ -26,6 +46,17 @@ export class HomePage implements OnInit {
       }, 100); // Pequeño retraso para asegurar que el DOM esté listo
       
     });
+  }
+  async cargarUsuario(){
+    let dataStorage = await this.storage.obtenerStorage();    
+    const req = await this.apiservice.obtenerUsuario(
+      {
+        p_correo: this.email,
+        token:dataStorage[0].token
+      }
+    );
+    this.usuario = req.data;
+    console.log("DATA INICIO USUARIO ", this.usuario);
   }
 
   async logout() {
@@ -176,9 +207,10 @@ export class HomePage implements OnInit {
   }
   
 
-  goToAddVehicle() {
-    this.router.navigateByUrl('/add-vehicle');
+  async goToAddVehicle() {
+    const navigationExtras:NavigationExtras = {
+      queryParams: {email: this.email}
+    };
+    this.router.navigate(['/add-vehicle'],navigationExtras);
   }
-
-  
 }

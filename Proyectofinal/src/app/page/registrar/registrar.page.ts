@@ -5,7 +5,7 @@ import { ApiService } from 'src/app/servicio/api.service';
 import { NavController } from '@ionic/angular';
 import { FirebaseService } from 'src/app/servicio/firebase.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
-
+import { StorageService } from 'src/app/servicio/storage.service';
 @Component({
   selector: 'app-registrar',
   templateUrl: './registrar.page.html',
@@ -18,7 +18,8 @@ export class RegistrarPage implements OnInit {
     private firebase:FirebaseService,
     private router:Router,
     private crearuser: ApiService,
-    private alertcontroller: AlertController
+    private alertcontroller: AlertController,
+    private storage: StorageService,
   ) { }
 
   nombre: string = '';
@@ -32,7 +33,7 @@ export class RegistrarPage implements OnInit {
 
   ngOnInit() {
   }
-  async registrar(){
+  async registrar() {
     try {
       let usuario = await this.firebase.registrar(this.email, this.password);
       const token = await usuario.user?.getIdToken();
@@ -53,11 +54,11 @@ export class RegistrarPage implements OnInit {
     } catch (error) {
       this.popAlert();
       console.log(error);
-    }
-  }
+    }
+  }
 
   onFileChange(event: any) {
-    if (event.target.files.length >0){
+    if (event.target.files.length > 0) {
       this.archivoImagen = event.target.files[0];
     }
   }
