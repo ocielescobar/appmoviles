@@ -8,28 +8,29 @@ const llave='llaveValor';
   providedIn: 'root'
 })
 export class StorageService {
+  
   storage1: any;
   guardarStorage: any;
 
-  constructor() { }
-
+  constructor() {}
+  private readonly tokenKey = llave; // Nombre de la llave para el token
+  
+  async clearToken() {
+    await Preferences.remove({ key: this.tokenKey });
+  }
+  
   async getItem(key: string): Promise<string | null> {
-    try {
-      const obj = await Preferences.get({ key }); // Obtener el valor desde Preferences
-      return obj.value; // Devuelve el valor almacenado
-    } catch (error) {
-      console.error(`Error obteniendo el item con la llave ${key}:`, error);
-      return null; // Manejo de errores
-    }
+    const { value } = await Preferences.get({ key });
+    return value;
   }
  
-  private async setItem(key:string,valor:string){ 
-    await Preferences.set({key:key,value:valor}); 
-  } 
+  async setItem(key: string, value: string) {
+    await Preferences.set({ key, value });
+  }
  
-  private async removeItem(key:string){ 
-    await Preferences.remove({key:key}); 
-  }    
+  async removeItem(key: string) {
+    await Preferences.remove({ key });
+  }
   
   async obtenerStorage(){
     const data = await this.getItem(llave);
@@ -39,6 +40,7 @@ export class StorageService {
       return JSON.parse(data);
     }
   }
+
 
   async agregarStorage(data:any){
     this.setItem(llave,JSON.stringify(data));

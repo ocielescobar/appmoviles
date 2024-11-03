@@ -4,17 +4,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UserModel } from 'src/app/models/usuario';
 import { StorageService } from 'src/app/servicio/storage.service';
 import { FirebaseService } from 'src/app/servicio/firebase.service';
-import { jwtDecode } from 'jwt-decode';
-
+import { dataGetUser } from 'src/app/servicio/api.service';
 @Component({
   selector: 'app-add-vehicle',
   templateUrl: './add-vehicle.page.html',
   styleUrls: ['./add-vehicle.page.scss'],
 })
 export class AddVehiclePage implements OnInit {
+  
   email: string = "";
-  usuario: UserModel[] = []; // Cambiado a null para poder verificar si existe
-  id_usuario: number = 0;
+  usuario: UserModel[] = [];
+  id_usuario: number = 0; // Asegúrate de asignar este valor correctamente
   patente: string = "";
   marca: string = "";
   modelo: string = "";
@@ -24,6 +24,8 @@ export class AddVehiclePage implements OnInit {
   token: string = '';
   archivoImagen: File | null = null;
 
+  dataStorage: any[] = []; // O ajusta el tipo según lo que devuelva tu StorageService
+
   constructor(
     private apiservice: ApiService,
     private storage: StorageService,
@@ -32,8 +34,8 @@ export class AddVehiclePage implements OnInit {
     private firebase: FirebaseService,
   ) {
     this.activate.queryParams.subscribe(params => {
-      this.email = params['email'];
-      console.log(this.email);
+      this.email = params['email'] || '';
+      console.log("Email obtenido:", this.email);
     });
   }
 
@@ -41,24 +43,39 @@ export class AddVehiclePage implements OnInit {
     this.cargarUsuario();
   }
 
-  async cargarUsuario(){
-    let dataStorage = await this.storage.obtenerStorage();    
-    const req = await this.apiservice.obtenerUsuario(
-      {
-        p_correo: this.email,
-        token:dataStorage[0].token
-      }
-    );
-    this.usuario = req.data;
-  }
+  async cargarUsuario() {
+    this.dataStorage = await this.storage.obtenerStorage();
+    console.log("Datos de storage:", this.dataStorage); // Verificar el contenido del storage
   
+    // Crea el objeto dataGetUser
+    const userData: dataGetUser = {
+      p_correo: this.email,
+      token: this.dataStorage[0]?.token, // Usar el token del storage
+    };
+  
+    // Llama al servicio para obtener el usuario
+    const req = await this.apiservice.obtenerUsuario(userData);
+  
+    if (req && req.data) {
+      this.usuario = req.data; // Asigna la respuesta a usuario
+      console.log("Datos del usuario:", this.usuario); // Muestra los datos en la consola
+  
+      // Asegúrate de que esto coincida con la estructura de tus datos
+      this.id_usuario = this.usuario[0]?.id_usuario; // Suponiendo que el ID está en el primer elemento
+      console.log(`ID de usuario: ${this.id_usuario}`);
+    } else {
+      console.error("No se encontraron datos del usuario");
+    }
+  }
+
   async registrarVehiculo() {
     try {
+      const idUsuarioManual = 27;
       let dataStorage = await this.storage.obtenerStorage();
       if (this.archivoImagen) {
         const request = await this.apiservice.agregarVehiculo(
           {
-            p_id_usuario: this.usuario[0].id_usuario,
+            p_id_usuario: idUsuarioManual,
             p_patente: this.patente,
             p_marca: this.marca,
             p_modelo:this.modelo,

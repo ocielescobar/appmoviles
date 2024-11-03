@@ -11,7 +11,6 @@ import { UserModel } from '../models/usuario';
 export class ApiService {
   httpOptions = {
     headers: new HttpHeaders({
-      'Content-Type': 'application/json',
       'Acces-Control-Allow-Origin': '*',
     }),
   };
@@ -60,6 +59,32 @@ export class ApiService {
       throw error;
     }
   }
+  async obtenerUsuario(data: dataGetUser) {
+    try {
+      // Verificar que el token esté presente
+      if (!data.token) {
+        throw new Error("El token es obligatorio para obtener el usuario.");
+      }
+  
+      const params = {
+        p_correo: data.p_correo,
+        token: data.token
+      };
+  
+      const response = await lastValueFrom(
+        this.http.get<any>(`${this.apiURL}user/obtener`, { params })
+      );
+  
+      console.log("Respuesta de obtenerUsuario:", response);
+      return response;
+    } catch (error) {
+      console.error("Error al obtener el ID del usuario:", error);
+      if (error instanceof HttpErrorResponse) {
+        console.error("Detalles del error:", error.message);
+      }
+      throw error;
+    }
+  }
 
   async agregarVehiculo(data: bodyVehiculo, imageFile: File) {
     try {
@@ -85,32 +110,45 @@ export class ApiService {
       throw error;
     }
   }
-
-  async obtenerUsuario(data:dataGetUser){
+  async getUserId(token: string): Promise<any> {
     try {
-      const params = {
-        p_correo: data.p_correo,
-        token:data.token
-      }
-      const response = await lastValueFrom(this.http.get<any>(environment.apiUrl + 'user/obtener',{params}));
+      const response = await lastValueFrom(
+        this.http.get<any>(`${this.apiURL}user/obtener`, {
+          headers: new HttpHeaders({
+            'Authorization': `Bearer ${token}`,
+          }),
+        })
+      );
       return response;
     } catch (error) {
+      console.error("Error al obtener el ID del usuario:", error);
+      if (error instanceof HttpErrorResponse) {
+        console.error("Detalles del error:", error.message);
+      }
       throw error;
     }
   }
-  async obtenerVehiculo(){
-    try {
-      const params = {
-        p_id: 27,
-        token: 'eyJhbGciOiJSUzI1NiIsImtpZCI6ImU2YWMzNTcyNzY3ZGUyNjE0ZmM1MTA4NjMzMDg3YTQ5MjMzMDNkM2IiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vc21wcm95ZWN0b2R1b2MiLCJhdWQiOiJzbXByb3llY3RvZHVvYyIsImF1dGhfdGltZSI6MTczMDUwNTAwNSwidXNlcl9pZCI6IkpYa2pZcGE0a2liVDBTcDdCMU1HVUt0YzRseTEiLCJzdWIiOiJKWGtqWXBhNGtpYlQwU3A3QjFNR1VLdGM0bHkxIiwiaWF0IjoxNzMwNTA1MDA1LCJleHAiOjE3MzA1MDg2MDUsImVtYWlsIjoib2NpLmVzY29iYXJAZHVvY3VjLmNsIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbIm9jaS5lc2NvYmFyQGR1b2N1Yy5jbCJdfSwic2lnbl9pbl9wcm92aWRlciI6InBhc3N3b3JkIn19.bqeuEuHAajqevGixtPLLsjxHToRPHbvaZCD5NrSzRyqvDUGHxpml7N_eX_BetFEooZogIhtkbdoUvOVduiySDPfJY3iHBDjgoS4-k3ygorJKQuT9uEVtJ-BRk5Pi3ccTgp0JrK_MljmmT6OMoLDaBjqtOCbvt1MHMDVfIVq3uzUfnYcz5-8YeDEI1_6-3fh95mr5KxJu68Z3CXCtUYwJf-Cq99PVlwESIhDnH8ohNQQvydEQXq-T4OZqSJI0RTQuVSKjpwMFWCy92uVLegpA6AQkjm1mk5KfL0k35c7Y-HD6ZNcv2e9vo7W91k625s16i2opA4nfGBjs4uwEuachuQ'
-      }
-      const response = await lastValueFrom(this.http.get<any>(environment.apiUrl + 'vehiculo/obtener',{params}));
-      return response;
-    } catch (error) {
-      throw error;
-    }
 
-  }
+  async agregarViaje(data: crearViaje) {
+    try {
+        const formData = new FormData();
+        formData.append('p_id_usuario', data.p_id_usuario.toString());
+        formData.append('p_id_vehiculo', data.p_id_vehiculo.toString());
+        formData.append('p_ubicacion_origen', data.p_ubicacion_origen);
+        formData.append('p_ubicacion_destino', data.p_ubicacion_destino);
+        formData.append('p_costo', data.p_costo.toString());
+        formData.append('token', data.token);
+
+        const response = await lastValueFrom(
+          this.http.post<any>(`${this.apiURL}viaje/agregar`, formData) // Usa la URL completa
+      );
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+  
 }
 
 interface bodyUser{
@@ -119,9 +157,9 @@ interface bodyUser{
   p_telefono: string;
   token?: string;
 }
-interface dataGetUser{
-  p_correo:string;
-  token:string;
+export interface dataGetUser{
+  p_correo: string;
+  token: string;
 }
 
 interface bodyVehiculo {
@@ -133,4 +171,13 @@ interface bodyVehiculo {
   p_color: string;
   p_tipo_combustible: string;
   token: string;
+}
+
+interface crearViaje{
+    p_id_usuario: number,
+    p_id_vehiculo: number,
+    p_ubicacion_origen: string, 
+    p_ubicacion_destino: string, 
+    p_costo: number,  
+    token: string
 }

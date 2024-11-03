@@ -52,7 +52,7 @@ export class HomePage implements OnInit {
     const req = await this.apiservice.obtenerUsuario(
       {
         p_correo: this.email,
-        token:dataStorage[0].token
+        'token':dataStorage[0].token
       }
     );
     this.usuario = req.data;
@@ -211,6 +211,6 @@ export class HomePage implements OnInit {
     const navigationExtras:NavigationExtras = {
       queryParams: {email: this.email}
     };
-    this.router.navigate(['/add-vehicle'],navigationExtras);
+    this.router.navigate(['/add-vehicle'], { queryParams: { email: this.email } });
   }
 }

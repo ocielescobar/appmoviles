@@ -1,12 +1,29 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
+    <ion-title>Registrar Viaje</ion-title>
     <ion-buttons slot="end">
-      <ion-back-button defaultHref="/home"></ion-back-button>
-    </ion-buttons>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    
-    <ion-title>Crear Viaje</ion-title>
+    <ion-back-button defaultHref="/home"></ion-back-button>
+  </ion-buttons>
   </ion-toolbar>
 </ion-header>
+
+<ion-content>
+  <form (ngSubmit)="registrarViaje()">
+    <ion-item>
+      <ion-label position="floating">Ubicación de Origen</ion-label>
+      <ion-input [(ngModel)]="ubicacionOrigen" name="ubicacionOrigen" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Ubicación de Destino</ion-label>
+      <ion-input [(ngModel)]="ubicacionDestino" name="ubicacionDestino" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Costo del Viaje</ion-label>
+      <ion-input type="number" [(ngModel)]="costo" name="costo" required></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" type="submit">Registrar Viaje</ion-button>
+  </form>
+</ion-content>
