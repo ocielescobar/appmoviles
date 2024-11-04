@@ -70,12 +70,11 @@ export class AddVehiclePage implements OnInit {
 
   async registrarVehiculo() {
     try {
-      const idUsuarioManual = 27;
       let dataStorage = await this.storage.obtenerStorage();
       if (this.archivoImagen) {
         const request = await this.apiservice.agregarVehiculo(
           {
-            p_id_usuario: idUsuarioManual,
+            p_id_usuario: this.id_usuario,
             p_patente: this.patente,
             p_marca: this.marca,
             p_modelo:this.modelo,
