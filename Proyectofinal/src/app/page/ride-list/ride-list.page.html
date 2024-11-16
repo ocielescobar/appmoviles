@@ -15,16 +15,7 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Lista de Viajes</ion-title>
+      <iframe src="https://uber.matiivilla.cl/inicio#:~:text=Vehiculos-,Viajes,-ID" width="100%" height="600px" frameborder="0"></iframe>
     </ion-toolbar>
   </ion-header>
 
-  <ion-list>
-    <ion-item *ngFor="let ride of rides">
-      <ion-label>
-        <h2>Destino: {{ ride.destination }}</h2>
-        <p>Costo: {{ ride.cost }} CLP</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
-</ion-content>
