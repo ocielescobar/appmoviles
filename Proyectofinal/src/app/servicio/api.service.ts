@@ -175,7 +175,7 @@ interface bodyVehiculo {
 
 interface crearViaje{
     p_id_usuario: number,
-    p_id_vehiculo: number,
+    P_id_vehiculo: number,
     p_ubicacion_origen: string, 
     p_ubicacion_destino: string, 
     p_costo: number,  
