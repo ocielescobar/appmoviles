@@ -133,7 +133,7 @@ export class ApiService {
     try {
         const formData = new FormData();
         formData.append('p_id_usuario', data.p_id_usuario.toString());
-        formData.append('p_id_vehiculo', data.p_id_vehiculo.toString());
+        formData.append('P_id_vehiculo', data.p_id_vehiculo.toString());
         formData.append('p_ubicacion_origen', data.p_ubicacion_origen);
         formData.append('p_ubicacion_destino', data.p_ubicacion_destino);
         formData.append('p_costo', data.p_costo.toString());
