@@ -86,6 +86,32 @@ export class ApiService {
     }
   }
 
+  async obtenerVehiculo(data: obtenerVehiculo) {
+    try {
+      // Verificar que el token esté presente
+      if (!data.p_token) {
+        throw new Error("El token es obligatorio para obtener el usuario.");
+      }
+  
+      const params = {
+        token: data.p_token
+      };
+  
+      const response = await lastValueFrom(
+        this.http.get<any>(`${this.apiURL}vehiculo/obtener`, { params })
+      );
+  
+      console.log("Respuesta de obtenerVehiculo:", response);
+      return response;
+    } catch (error) {
+      console.error("Error al obtener el ID del usuario:", error);
+      if (error instanceof HttpErrorResponse) {
+        console.error("Detalles del error:", error.message);
+      }
+      throw error;
+    }
+  }
+
   async agregarVehiculo(data: bodyVehiculo, imageFile: File) {
     try {
       const formData = new FormData();
@@ -133,10 +159,10 @@ export class ApiService {
     try {
         const formData = new FormData();
         formData.append('p_id_usuario', data.p_id_usuario.toString());
-        formData.append('P_id_vehiculo', data.p_id_vehiculo.toString());
         formData.append('p_ubicacion_origen', data.p_ubicacion_origen);
         formData.append('p_ubicacion_destino', data.p_ubicacion_destino);
         formData.append('p_costo', data.p_costo.toString());
+        formData.append('p_id_vehiculo', data.p_id_vehiculo.toString());
         formData.append('token', data.token);
 
         const response = await lastValueFrom(
@@ -161,6 +187,9 @@ export interface dataGetUser{
   p_correo: string;
   token: string;
 }
+interface obtenerVehiculo{
+  p_token: string;
+}
 
 interface bodyVehiculo {
   p_id_usuario: number;
@@ -175,9 +204,9 @@ interface bodyVehiculo {
 
 interface crearViaje{
     p_id_usuario: number,
-    P_id_vehiculo: number,
     p_ubicacion_origen: string, 
     p_ubicacion_destino: string, 
     p_costo: number,  
+    p_id_vehiculo: number,
     token: string
 }
