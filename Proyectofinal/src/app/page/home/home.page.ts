@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { UserModel } from 'src/app/models/usuario';
 import { ApiService } from 'src/app/servicio/api.service';
 import { FirebaseService } from 'src/app/servicio/firebase.service';
@@ -29,6 +30,7 @@ export class HomePage implements OnInit {
     private storage: StorageService,
     private apiservice: ApiService,
     private activate:ActivatedRoute,
+    private alertcontroller:AlertController,
     ) {
       this.activate.queryParams.subscribe(params => {
         this.email = params['email'];
@@ -68,8 +70,20 @@ export class HomePage implements OnInit {
     this.router.navigateByUrl('/create-ride');
   }
 
-  goToRideList() {
-    this.router.navigateByUrl('/ride-list');
+  async goToRideList() {
+    let dataStorage = await this.storage.obtenerStorage();
+    const vehiculos = await this.apiservice.obtenerVehiculo({
+      p_id: this. usuario[0].id_usuario,
+      p_token: dataStorage[0].token
+    });
+    if (vehiculos.data.length > 0) {
+      const navigationExtras: NavigationExtras = {
+        queryParams: {email: this.email}
+      };
+      this.router.navigateByUrl('/ride-list');
+    } else {
+      this.popAlertNoVehiculos
+    }    
   }
 
   loadGoogleMaps(): Promise<void> {
@@ -212,5 +226,30 @@ export class HomePage implements OnInit {
       queryParams: {email: this.email}
     };
     this.router.navigate(['/add-vehicle'], { queryParams: { email: this.email } });
+  }
+
+  async Obtenervehiculos(){
+    let dataStorage = await this.storage.obtenerStorage();
+    const vehiculos = await this.apiservice.obtenerVehiculo({
+      p_id: this.usuario[0].id_usuario,
+      p_token:dataStorage[0].token
+    });
+    console.log("Data obtenida y principal", vehiculos);
+    if(vehiculos.data.length > 0){
+      const navigationExtras:NavigationExtras = {
+        queryParams: {email: this.email}
+      };
+      this.router.navigate(['/ver-vehiculos'], navigationExtras)
+    }else{
+      this.popAlertNoVehiculos();
+    }
+  }
+  async popAlertNoVehiculos(){
+    const alert = await this.alertcontroller.create({
+      header:'Error',
+      message:"Sin vehiculos registrados",
+      buttons:['Ok']
+    })
+    await alert.present();
   }
 }

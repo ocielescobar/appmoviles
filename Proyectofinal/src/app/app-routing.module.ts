@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 import { AngularFireAuthGuard, redirectUnauthorizedTo } from '@angular/fire/compat/auth-guard';
 import { PageNotFoundComponent } from './component/page-not-found/page-not-found.component';
+import { VerVehiculosPage } from './page/ver-vehiculos/ver-vehiculos.page';
 const redireccionarLogin = () => redirectUnauthorizedTo(['/registrar']);
 
 const routes: Routes = [
@@ -52,6 +53,7 @@ const routes: Routes = [
     data: { authGuardPipe: redireccionarLogin },
     loadChildren: () => import('./page/profile/profile.module').then(m => m.ProfilePageModule)
   },
+  { path: 'ver-vehiculos', component: VerVehiculosPage },
   {
     path: 'add-vehicle',
     loadChildren: () => import('./page/add-vehicle/add-vehicle.module').then(m => m.AddVehiclePageModule)
@@ -60,6 +62,11 @@ const routes: Routes = [
     path: '**',
     component: PageNotFoundComponent
   },
+  {
+    path: 'ver-vehiculos',
+    loadChildren: () => import('./page/ver-vehiculos/ver-vehiculos.module').then( m => m.VerVehiculosPageModule)
+  },
+
 
 ];
 

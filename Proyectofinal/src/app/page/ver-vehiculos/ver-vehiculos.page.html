@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar>
+    <div>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/principal"></ion-back-button>
+      </ion-buttons>
+      <img src="assets/img/tellevofoto.png" alt="Header Image">
+    </div>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card *ngFor="let v of vehiculos">
+    <h2>Patente: {{v.patente}}</h2>
+    <h2>Marca: {{v.marca}}</h2>
+    <h2>Modelo: {{v.modelo}}</h2>
+    <h2>Año: {{v.anio}}</h2>
+    <h2>Color: {{v.color}}</h2>
+  </ion-card>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-title>Desarrollado por nosotros</ion-title>
+  </ion-toolbar>
+</ion-footer>

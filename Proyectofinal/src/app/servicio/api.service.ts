@@ -87,27 +87,15 @@ export class ApiService {
   }
 
   async obtenerVehiculo(data: obtenerVehiculo) {
-    try {
-      // Verificar que el token esté presente
-      if (!data.p_token) {
-        throw new Error("El token es obligatorio para obtener el usuario.");
-      }
-  
-      const params = {
+    try{
+      const params={
+        p_id: data.p_id,
         token: data.p_token
       };
-  
       const response = await lastValueFrom(
-        this.http.get<any>(`${this.apiURL}vehiculo/obtener`, { params })
-      );
-  
-      console.log("Respuesta de obtenerVehiculo:", response);
+      this.http.get<any>(environment.apiUrl+ 'vehiculo/obtener', {params}));
       return response;
-    } catch (error) {
-      console.error("Error al obtener el ID del usuario:", error);
-      if (error instanceof HttpErrorResponse) {
-        console.error("Detalles del error:", error.message);
-      }
+    }catch(error){
       throw error;
     }
   }
@@ -157,16 +145,9 @@ export class ApiService {
 
   async agregarViaje(data: crearViaje) {
     try {
-        const formData = new FormData();
-        formData.append('p_id_usuario', data.p_id_usuario.toString());
-        formData.append('p_ubicacion_origen', data.p_ubicacion_origen);
-        formData.append('p_ubicacion_destino', data.p_ubicacion_destino);
-        formData.append('p_costo', data.p_costo.toString());
-        formData.append('p_id_vehiculo', data.p_id_vehiculo.toString());
-        formData.append('token', data.token);
-
+             
         const response = await lastValueFrom(
-          this.http.post<any>(`${this.apiURL}viaje/agregar`, formData) // Usa la URL completa
+          this.http.post<any>(environment.apiUrl = 'viaje/agregar', data)
       );
         return response;
     } catch (error) {
@@ -188,6 +169,7 @@ export interface dataGetUser{
   token: string;
 }
 interface obtenerVehiculo{
+  p_id: number;
   p_token: string;
 }
 

@@ -13,14 +13,13 @@ import { FirebaseService } from 'src/app/servicio/firebase.service';
 })
 export class CreateRidePage implements OnInit {
   usuario:UserModel[]=[];
-  ubicacionOrigen: string = "";
-  ubicacionDestino: string = "";
-  costo: number = 0;
-  idVehiculo: number = 0; // Asegúrate de inicializar este valor en tu formulario o componente
   email: string = "";
   id_usuario: number = 0; // Asegúrate de asignar este valor correctamente
   dataStorage: any[] = []; // O ajusta el tipo según lo que devuelva tu StorageService
-
+  p_ubicacion_origen: string = "";
+  p_ubicacion_destino: string = "";
+  p_costo: number = 0;
+  vehiculo: any[] = [];
   
   constructor(
     private apiservice: ApiService,
@@ -36,7 +35,8 @@ export class CreateRidePage implements OnInit {
   }
   
   ngOnInit() {
-    // Inicializa o recupera datos si es necesario
+    this.cargarUsuario();
+
   }
   async cargarUsuario() {
     this.dataStorage = await this.storage.obtenerStorage();
@@ -62,41 +62,23 @@ export class CreateRidePage implements OnInit {
       console.error("No se encontraron datos del usuario");
     }
   }
+
   async registrarViaje() {
+    let dataStorage = await this.storage.obtenerStorage();
     try {
-      
-        let dataStorage = await this.storage.obtenerStorage();
-
-        if (!this.ubicacionOrigen || !this.ubicacionDestino || !this.costo) {
-            console.error('Por favor completa todos los campos requeridos.');
-            return; 
+      const request = await this.apiservice.agregarViaje(
+        {
+          p_id_usuario: this.usuario[0].id_usuario,
+          p_ubicacion_origen: this.p_ubicacion_origen,
+          p_ubicacion_destino: this.p_ubicacion_destino,
+          p_costo: this.p_costo,
+          p_id_vehiculo: this.vehiculo[0].idVehiculo,
+          token: dataStorage[0].token
         }
-
-        if (this.usuario.length === 0) {
-            console.error('No se encontró información del usuario.');
-            return;
-        }
-
-        const viajeData = {
-            p_id_usuario: this.usuario[0].id_usuario,
-            p_id_vehiculo: this.idVehiculo,
-            p_ubicacion_origen: this.ubicacionOrigen,
-            p_ubicacion_destino: this.ubicacionDestino,
-            p_costo: this.costo,
-            token: dataStorage[0].token,
-        };
-
-        const request = await this.apiservice.agregarViaje(viajeData);
-        console.log('Viaje registrado exitosamente:', request);
-        this.router.navigateByUrl('home');
-
-    } catch (error) {
-        if (error instanceof HttpErrorResponse) {
-            console.error('Error de conexión:', error.message);
-            console.error('Detalles del error:', error);
-        } else {
-            console.error('Error al registrar viaje:', error);
-        }
+      );
+      this.router.navigateByUrl('home');
+    } catch (error){
+      console.log(error)
     }
 }
 }
