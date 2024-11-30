@@ -5,7 +5,8 @@ import { ApiService, dataGetUser } from 'src/app/servicio/api.service'; // Ajust
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserModel } from 'src/app/models/usuario';
 import { FirebaseService } from 'src/app/servicio/firebase.service';
-
+import { NavigationExtras } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 @Component({
   selector: 'app-create-ride',
   templateUrl: './create-ride.page.html',
@@ -27,6 +28,7 @@ export class CreateRidePage implements OnInit {
     private activate: ActivatedRoute,
     private router: Router,
     private firebase: FirebaseService,
+    private alertController: AlertController,
   ) {
     this.activate.queryParams.subscribe(params => {
       this.email = params['email'] || '';
@@ -38,29 +40,16 @@ export class CreateRidePage implements OnInit {
     this.cargarUsuario();
 
   }
-  async cargarUsuario() {
-    this.dataStorage = await this.storage.obtenerStorage();
-    console.log("Datos de storage:", this.dataStorage); // Verificar el contenido del storage
-  
-    // Crea el objeto dataGetUser
-    const userData: dataGetUser = {
-      p_correo: this.email,
-      token: this.dataStorage[0]?.token, // Usar el token del storage
-    };
-  
-    // Llama al servicio para obtener el usuario
-    const req = await this.apiservice.obtenerUsuario(userData);
-  
-    if (req && req.data) {
-      this.usuario = req.data; // Asigna la respuesta a usuario
-      console.log("Datos del usuario:", this.usuario); // Muestra los datos en la consola
-  
-      // Asegúrate de que esto coincida con la estructura de tus datos
-      this.id_usuario = this.usuario[0]?.id_usuario; // Suponiendo que el ID está en el primer elemento
-      console.log(`ID de usuario: ${this.id_usuario}`);
-    } else {
-      console.error("No se encontraron datos del usuario");
-    }
+  async cargarUsuario(){
+    let dataStorage = await this.storage.obtenerStorage();    
+    const req = await this.apiservice.obtenerUsuario(
+      {
+        p_correo: this.email,
+        'token':dataStorage[0].token
+      }
+    );
+    this.usuario = req.data;
+    console.log("DATA INICIO USUARIO ", this.usuario);
   }
 
   async registrarViaje() {
@@ -80,5 +69,13 @@ export class CreateRidePage implements OnInit {
     } catch (error){
       console.log(error)
     }
+}
+async popAlertNoVehiculos(){
+  const alert = await this.alertController.create({
+    header:'Error',
+    message:"Sin vehiculos registrados",
+    buttons:['Ok']
+  })
+  await alert.present();
 }
 }

@@ -147,7 +147,7 @@ export class ApiService {
     try {
              
         const response = await lastValueFrom(
-          this.http.post<any>(environment.apiUrl = 'viaje/agregar', data)
+          this.http.post<any>(environment.apiUrl + 'viaje/agregar', data)
       );
         return response;
     } catch (error) {
