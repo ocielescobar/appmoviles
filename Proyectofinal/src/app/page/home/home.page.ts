@@ -66,15 +66,27 @@ export class HomePage implements OnInit {
     this.router.navigateByUrl('/login');
   }
 
-  goToCreateRide() {
-    this.router.navigateByUrl('/create-ride');
+  async goToCreateRide() {let dataStorage = await this.storage.obtenerStorage();
+    const vehiculos = await this.apiservice.obtenerVehiculo({
+      p_id: this. usuario[0].id_usuario,
+      token: dataStorage[0].token
+    });
+    if (vehiculos.data.length > 0) {
+      const navigationExtras:NavigationExtras = {
+        queryParams: {email: this.email}
+      };
+      this.router.navigate(['/create-ride'],navigationExtras);
+    } else {
+      this.popAlertNoVehiculos
+    }    
+    
   }
 
   async goToRideList() {
     let dataStorage = await this.storage.obtenerStorage();
     const vehiculos = await this.apiservice.obtenerVehiculo({
       p_id: this. usuario[0].id_usuario,
-      p_token: dataStorage[0].token
+      token: dataStorage[0].token
     });
     if (vehiculos.data.length > 0) {
       const navigationExtras: NavigationExtras = {
@@ -228,22 +240,34 @@ export class HomePage implements OnInit {
     this.router.navigate(['/add-vehicle'], { queryParams: { email: this.email } });
   }
 
-  async Obtenervehiculos(){
+  async Obtenervehiculos() {
+    if (!this.usuario || this.usuario.length === 0) {
+      console.error("Usuario no cargado o está vacío.");
+      return;
+    }
+  
     let dataStorage = await this.storage.obtenerStorage();
-    const vehiculos = await this.apiservice.obtenerVehiculo({
-      p_id: this.usuario[0].id_usuario,
-      p_token:dataStorage[0].token
-    });
-    console.log("Data obtenida y principal", vehiculos);
-    if(vehiculos.data.length > 0){
-      const navigationExtras:NavigationExtras = {
-        queryParams: {email: this.email}
-      };
-      this.router.navigate(['/ver-vehiculos'], navigationExtras)
-    }else{
-      this.popAlertNoVehiculos();
+    try {
+      const vehiculos = await this.apiservice.obtenerVehiculo({
+        p_id: this.usuario[0].id_usuario,
+        token: dataStorage[0]?.token,
+      });
+  
+      console.log("Vehículos obtenidos:", vehiculos);
+  
+      if (vehiculos.data.length > 0) {
+        const navigationExtras: NavigationExtras = {
+          queryParams: { email: this.email },
+        };
+        this.router.navigate(['/ver-vehiculos'], navigationExtras);
+      } else {
+        this.popAlertNoVehiculos();
+      }
+    } catch (error) {
+      console.error("Error al obtener vehículos:", error);
     }
   }
+  
   async popAlertNoVehiculos(){
     const alert = await this.alertcontroller.create({
       header:'Error',

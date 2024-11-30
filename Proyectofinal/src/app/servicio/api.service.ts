@@ -90,7 +90,7 @@ export class ApiService {
     try{
       const params={
         p_id: data.p_id,
-        token: data.p_token
+        token: data.token
       };
       const response = await lastValueFrom(
       this.http.get<any>(environment.apiUrl+ 'vehiculo/obtener', {params}));
@@ -170,7 +170,7 @@ export interface dataGetUser{
 }
 interface obtenerVehiculo{
   p_id: number;
-  p_token: string;
+  token: string;
 }
 
 interface bodyVehiculo {
@@ -181,14 +181,14 @@ interface bodyVehiculo {
   p_anio: number;
   p_color: string;
   p_tipo_combustible: string;
-  token: string;
+  token?: string;
 }
 
 interface crearViaje{
-    p_id_usuario: number,
-    p_ubicacion_origen: string, 
-    p_ubicacion_destino: string, 
-    p_costo: number,  
-    p_id_vehiculo: number,
-    token: string
+    p_id_usuario: number;
+    p_ubicacion_origen: string; 
+    p_ubicacion_destino: string;
+    p_costo: number;
+    p_id_vehiculo: number;
+    token: string;
 }

@@ -21,6 +21,7 @@ export class CreateRidePage implements OnInit {
   p_ubicacion_destino: string = "";
   p_costo: number = 0;
   vehiculo: any[] = [];
+  viaje:any[] = [];
   
   constructor(
     private apiservice: ApiService,
@@ -37,39 +38,86 @@ export class CreateRidePage implements OnInit {
   }
   
   ngOnInit() {
-    this.cargarUsuario();
-
+    this.activate.queryParams.subscribe((params) => {
+      this.email = params['email'];
+      console.log('Email recibido:', this.email);
+      this.cargarUsuario();
+    });
   }
   async cargarUsuario(){
-    let dataStorage = await this.storage.obtenerStorage();    
+    let datastorage = await this.storage.obtenerStorage();
     const req = await this.apiservice.obtenerUsuario(
       {
         p_correo: this.email,
-        'token':dataStorage[0].token
+        token: datastorage[0].token
       }
     );
-    this.usuario = req.data;
-    console.log("DATA INICIO USUARIO ", this.usuario);
+    this.usuario= req.data;
+    console.log("Data Inicio Usuario", this.usuario);
+    this.obtenerVehiculos();
+  } 
+  
+  async obtenerVehiculos(){
+    let datastorage = await this.storage.obtenerStorage();
+    const req = await this.apiservice.obtenerVehiculo(
+      {
+        p_id: this.usuario[0].id_usuario,
+        token: datastorage[0].token
+      }
+    );
+    this.vehiculo= req.data;
+    console.log("Data Inicio Vehiculo", this.vehiculo);
   }
-
+  
   async registrarViaje() {
-    let dataStorage = await this.storage.obtenerStorage();
-    try {
-      const request = await this.apiservice.agregarViaje(
-        {
-          p_id_usuario: this.usuario[0].id_usuario,
-          p_ubicacion_origen: this.p_ubicacion_origen,
-          p_ubicacion_destino: this.p_ubicacion_destino,
-          p_costo: this.p_costo,
-          p_id_vehiculo: this.vehiculo[0].idVehiculo,
-          token: dataStorage[0].token
-        }
-      );
-      this.router.navigateByUrl('home');
-    } catch (error){
-      console.log(error)
+    // Verificar que el usuario esté cargado
+    if (!this.usuario || this.usuario.length === 0) {
+      console.error("Usuario no cargado o está vacío.");
+      return;
     }
-}
+  
+    // Obtener datos del almacenamiento
+    let dataStorage = await this.storage.obtenerStorage();
+  
+    try {
+      // Obtener los vehículos asociados al usuario
+      const vehiculos = await this.apiservice.obtenerVehiculo({
+        p_id: this.usuario[0]?.id_usuario,
+        token: dataStorage[0]?.token,
+      });
+  
+      console.log("Vehículos obtenidos:", vehiculos);
+  
+      // Verificar que existan vehículos disponibles
+      if (vehiculos.data.length > 0) {
+        const navigationExtras: NavigationExtras = {
+          queryParams: { email: this.email },
+        };
+  
+        // Intentar registrar el viaje
+        try {
+          const request = await this.apiservice.agregarViaje({
+            p_id_usuario: this.usuario[0]?.id_usuario,
+            p_ubicacion_origen: this.p_ubicacion_origen,
+            p_ubicacion_destino: this.p_ubicacion_destino,
+            p_costo: this.p_costo,
+            p_id_vehiculo: this.vehiculo[0].id_vehiculo,
+            token: dataStorage[0]?.token,
+          });
+  
+          console.log("Viaje registrado con éxito:", request);
+          this.router.navigateByUrl('home');
+        } catch (error) {
+          console.error("Error al registrar el viaje:", error);
+        }
+      } else {
+        console.error("No se encontraron vehículos asociados.");
+      }
+    } catch (error) {
+      console.error("Error al obtener vehículos:", error);
+    }
+  }
+  
 async popAlertNoVehiculos(){
   const alert = await this.alertController.create({
     header:'Error',
