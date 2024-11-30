@@ -11,17 +11,17 @@
   <form (ngSubmit)="registrarViaje()">
     <ion-item>
       <ion-label position="floating">Ubicación de Origen</ion-label>
-      <ion-input [(ngModel)]="ubicacionOrigen" name="ubicacionOrigen" required></ion-input>
+      <ion-input [(ngModel)]="p_ubicacion_origen" name="ubicacion de origen" required></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Ubicación de Destino</ion-label>
-      <ion-input [(ngModel)]="ubicacionDestino" name="ubicacionDestino" required></ion-input>
+      <ion-input [(ngModel)]="p_ubicacion_destino" name="ubicacion de destino" required></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Costo del Viaje</ion-label>
-      <ion-input type="number" [(ngModel)]="costo" name="costo" required></ion-input>
+      <ion-input type="number" [(ngModel)]="p_costo" name="costo" required></ion-input>
     </ion-item>
 
     <ion-button expand="full" type="submit">Registrar Viaje</ion-button>

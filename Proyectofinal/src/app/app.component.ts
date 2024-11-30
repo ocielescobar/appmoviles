@@ -8,6 +8,7 @@ import { MenuController } from '@ionic/angular';
 })
 export class AppComponent {
   email: string | null = null;
+  menuCtrl: any;
   constructor(private menu: MenuController, private router: Router, private afAuth: AngularFireAuth) {
 
     this.afAuth.authState.subscribe(user => {
@@ -25,6 +26,10 @@ export class AppComponent {
     });
   }
   closeMenu() {
-    this.menu.close();
-  }
+    const activeElement = document.activeElement as HTMLElement;
+    if (activeElement) {
+        activeElement.blur(); // Retira el foco del elemento activo
+    }
+    this.menuCtrl.close(); // Cierra el menú
+}
 }
