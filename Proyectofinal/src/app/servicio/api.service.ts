@@ -155,6 +155,20 @@ export class ApiService {
     }
 }
 
+  async obtenerViaje(data: dataGetViaje){
+    try {
+      const params = {
+        p_id_usuario: data.p_id_usuario,
+        token: data.token
+      };
+        const response = await lastValueFrom(
+        this.http.get<any>(environment.apiUrl + 'viaje/obtener', {params})
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
   
 }
 
@@ -191,4 +205,9 @@ interface crearViaje{
     p_costo: number;
     p_id_vehiculo: number;
     token: string;
+}
+
+interface dataGetViaje{
+  p_id_usuario: number;
+  token: string;
 }

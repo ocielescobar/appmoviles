@@ -10,37 +10,35 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <!-- Mensaje si no hay vehículos -->
-  <div *ngIf="vehiculos.length === 0" style="text-align: center; margin-top: 20px;">
+  <!-- Mensaje si no hay viajes -->
+  <div *ngIf="viajes.length === 0" style="text-align: center; margin-top: 20px;">
     <ion-card>
       <ion-card-content>
-        <p><strong>No se han encontrado vehículos registrados.</strong></p>
-        <ion-button routerLink="/add-vehicle" expand="block" color="primary">Agregar Vehículo</ion-button>
+        <p><strong>No se han encontrado viajes disponibles.</strong></p>
+        <ion-button routerLink="/crear-viaje" expand="block" color="primary">Crear Viaje</ion-button>
       </ion-card-content>
     </ion-card>
   </div>
 
-  <!-- Tarjetas de vehículos -->
-  <ion-card *ngFor="let v of vehiculos">
+  <!-- Tarjetas de viajes -->
+  <ion-card *ngFor="let v of viajes">
     <ion-card-header>
       <ion-card-title>
-        🚗 {{v.marca}} - {{v.modelo}}
+        🌍 {{v.ubicacion_origen}} - {{v.ubicacion_destino}}
       </ion-card-title>
       <ion-card-subtitle>
-        <strong>Patente:</strong> {{v.patente}}
+        <strong>Costo:</strong> ${{v.costo}}
       </ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>📅 Año:</strong> {{v.anio}}</p>
-      <p><strong>🎨 Color:</strong> {{v.color}}</p>
-      <p><strong>⛽ Combustible:</strong> {{v.tipo_combustible}}</p>
+      <p><strong>🗓 Fecha:</strong> {{v.fecha}}</p>
+      <p><strong>🚗 Estado:</strong> {{v.id_estado}}</p>
     </ion-card-content>
   </ion-card>
 </ion-content>
 
 <ion-footer>
   <ion-toolbar>
-    <ion-title>Desarrollado por nosotros</ion-title>
-    
+    <ion-title>Desarrollado por ST&OE</ion-title>
   </ion-toolbar>
 </ion-footer>

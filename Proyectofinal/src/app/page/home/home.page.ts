@@ -240,6 +240,11 @@ export class HomePage implements OnInit {
     this.router.navigate(['/add-vehicle'], { queryParams: { email: this.email } });
   }
 
+
+
+
+
+
   async Obtenervehiculos() {
     if (!this.usuario || this.usuario.length === 0) {
       console.error("Usuario no cargado o está vacío.");
@@ -276,4 +281,37 @@ export class HomePage implements OnInit {
     })
     await alert.present();
   }
+
+  async popAlertNoViajes(){
+    const alert = await this.alertcontroller.create({
+      header:'Error',
+      message:"Sin viajes registrados",
+      buttons:['Ok']
+    })
+    await alert.present();
+  }
+
+  async cargarViajes(){
+    let dataStorage = await this.storage.obtenerStorage();
+    const viajes = await this.apiservice.obtenerViaje(
+      {
+        p_id_usuario: this.usuario[0].id_usuario,
+        token: dataStorage[0].token,
+      }
+    );
+    if (viajes.data.length > 0) {
+      const navigationExtras: NavigationExtras = {
+        queryParams: { email: this.email },
+      };
+      this.router.navigate(['/ver-viaje'], navigationExtras);
+    } else {
+      this.popAlertNoViajes();
+    }
+  }
+ /* async goToVerViajes() {
+    const navigationExtras: NavigationExtras = {
+      queryParams: { email: this.email }
+    };
+    this.router.navigate(['/ver-viaje'], navigationExtras);
+  }*/
 }

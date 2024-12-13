@@ -60,6 +60,7 @@ ion-content {
   text-transform: uppercase;
   color: #ffffff;
   --box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  --background: #3880ff; /* Color de fondo común para todos los botones */
 }
 
 .custom-button.ion-color-tertiary {
@@ -68,6 +69,10 @@ ion-content {
 
 .custom-button.ion-color-primary {
   --background: #c2185b; /* Rosa oscuro */
+}
+
+.custom-button.ion-color-secondary {
+  --background: #ff4081; /* Rosa fuerte, para el botón de 'Ver Viajes' */
 }
 
 ion-button:hover {

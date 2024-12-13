@@ -58,15 +58,20 @@ const routes: Routes = [
     path: 'add-vehicle',
     loadChildren: () => import('./page/add-vehicle/add-vehicle.module').then(m => m.AddVehiclePageModule)
   },
-  {
-    path: '**',
-    component: PageNotFoundComponent
-  },
+ 
   {
     path: 'ver-vehiculos',
     loadChildren: () => import('./page/ver-vehiculos/ver-vehiculos.module').then( m => m.VerVehiculosPageModule)
   },
+  {
+    path: 'ver-viaje',
+    loadChildren: () => import('./page/ver-viaje/ver-viaje.module').then( m => m.VerViajePageModule)
+  },
 
+  {
+    path: '**',
+    component: PageNotFoundComponent
+  },
 
 ];
 
