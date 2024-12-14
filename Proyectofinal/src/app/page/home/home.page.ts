@@ -6,6 +6,9 @@ import { UserModel } from 'src/app/models/usuario';
 import { ApiService } from 'src/app/servicio/api.service';
 import { FirebaseService } from 'src/app/servicio/firebase.service';
 import { StorageService } from 'src/app/servicio/storage.service';
+import { bodyActualizarViaje } from 'src/app/servicio/api.service';
+import { lastValueFrom } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -13,10 +16,14 @@ import { StorageService } from 'src/app/servicio/storage.service';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
-
+  viajes: any[] = [];
   email: string="";
-  usuario:UserModel[]=[];
+  usuario: UserModel[] = [];
   vehiculos:any[]=[];
+  p_id_estado: number = 0;
+  p_id: number = 0;
+  private usuarioSubject = new BehaviorSubject<UserModel[] | null>(null);
+  usuario$ = this.usuarioSubject.asObservable(); // Observables para otros componentes/métodos
 
   @ViewChild('searchBox', { static: true }) searchBox!: ElementRef;
   center: google.maps.LatLngLiteral = { lat: -33.5024, lng: -70.6130 }; // Coordenadas por defecto
@@ -36,12 +43,21 @@ export class HomePage implements OnInit {
       this.activate.queryParams.subscribe(params => {
         this.email = params['email'];
         console.log(this.email)
-      })
+      });
+      this.usuarioSubject.subscribe((usuario) => {
+        this.usuario = usuario || [];
+      });
     }
-
-  ngOnInit() {
-    this.cargarUsuario();
-    this.loadGoogleMaps().then(() => {
+    origen: string = '';
+    destino: string = '';
+    costo: number | null = null;
+    idVehiculo: number | null = null;
+    
+ionViewWillEnter() {
+  this.cargarUsuario();
+}
+  async ngOnInit() {
+    await this.loadGoogleMaps().then(() => {
       setTimeout(() => {
         this.initMap(); // Inicializa el mapa después de un breve retraso
         this.initAutocomplete(); // Inicializa la autocompletación
@@ -55,32 +71,50 @@ export class HomePage implements OnInit {
     const req = await this.apiservice.obtenerUsuario(
       {
         p_correo: this.email,
-        'token':dataStorage[0].token
+        token:dataStorage[0].token
       }
     );
     this.usuario = req.data;
     console.log("DATA INICIO USUARIO ", this.usuario);
   }
 
+  
   async logout() {
     await this.firebase.logout();
     this.router.navigateByUrl('/login');
   }
 
-  async goToCreateRide() {let dataStorage = await this.storage.obtenerStorage();
-    const vehiculos = await this.apiservice.obtenerVehiculo({
-      p_id: this. usuario[0].id_usuario,
-      token: dataStorage[0].token
-    });
-    if (vehiculos.data.length > 0) {
-      const navigationExtras:NavigationExtras = {
-        queryParams: {email: this.email}
-      };
-      this.router.navigate(['/create-ride'],navigationExtras);
-    } else {
-      this.popAlertNoVehiculos
-    }    
-    
+  async goToCreateRide() {
+    try {
+      // Recargar usuario
+      await this.cargarUsuario();
+  
+      // Verifica si el usuario está cargado
+      if (!this.usuario || this.usuario.length === 0) {
+        console.error("Usuario no cargado o está vacío.");
+        alert('Usuario no cargado. Intenta reiniciar la sesión.');
+        return;
+      }
+  
+      // Obtener vehículos para el usuario
+      let dataStorage = await this.storage.obtenerStorage();
+      const vehiculos = await this.apiservice.obtenerVehiculo({
+        p_id: this.usuario[0]?.id_usuario,
+        token: dataStorage[0]?.token,
+      });
+  
+      if (vehiculos.data.length > 0) {
+        const navigationExtras: NavigationExtras = {
+          queryParams: { email: this.email },
+        };
+        this.router.navigate(['/create-ride'], navigationExtras);
+      } else {
+        this.popAlertNoVehiculos();
+      }
+    } catch (error) {
+      console.error("Error al cargar los vehículos o usuario:", error);
+      alert("Hubo un problema al crear un viaje. Inténtalo de nuevo.");
+    }
   }
 
   async goToRideList() {
@@ -241,21 +275,18 @@ export class HomePage implements OnInit {
     this.router.navigate(['/add-vehicle'], { queryParams: { email: this.email } });
   }
 
-
-
-
-
-
   async Obtenervehiculos() {
-    if (!this.usuario || this.usuario.length === 0) {
-      console.error("Usuario no cargado o está vacío.");
-      return;
-    }
-  
-    let dataStorage = await this.storage.obtenerStorage();
     try {
+      // Recargar usuario para asegurar que esté actualizado
+      await this.cargarUsuario();
+      if (!this.usuario || this.usuario.length === 0) {
+        console.error("Usuario no cargado o está vacío.");
+        return;
+      }
+  
+      let dataStorage = await this.storage.obtenerStorage();
       const vehiculos = await this.apiservice.obtenerVehiculo({
-        p_id: this.usuario[0].id_usuario,
+        p_id: this.usuario[0]?.id_usuario,
         token: dataStorage[0]?.token,
       });
   
@@ -273,6 +304,7 @@ export class HomePage implements OnInit {
       console.error("Error al obtener vehículos:", error);
     }
   }
+  
   
   async popAlertNoVehiculos(){
     const alert = await this.alertcontroller.create({
@@ -292,27 +324,101 @@ export class HomePage implements OnInit {
     await alert.present();
   }
 
-  async cargarViajes(){
-    let dataStorage = await this.storage.obtenerStorage();
-    const viajes = await this.apiservice.obtenerViaje(
-      {
-        p_id_usuario: this.usuario[0].id_usuario,
-        token: dataStorage[0].token,
+  async cargarViajes() {
+    try {
+      // Recargar usuario para asegurar que esté actualizado
+      await this.cargarUsuario();
+  
+      // Verifica si el usuario está cargado
+      if (!this.usuario || this.usuario.length === 0) {
+        console.error("Usuario no cargado o está vacío.");
+        alert('Usuario no cargado. Intenta reiniciar la sesión.');
+        return;
       }
-    );
-    if (viajes.data.length > 0) {
-      const navigationExtras: NavigationExtras = {
-        queryParams: { email: this.email },
-      };
-      this.router.navigate(['/ver-viaje'], navigationExtras);
-    } else {
-      this.popAlertNoViajes();
+  
+      // Obtener datos de almacenamiento y cargar viajes
+      const dataStorage = await this.storage.obtenerStorage();
+      const viajesResponse = await this.apiservice.obtenerViaje({
+        p_id_usuario: this.usuario[0]?.id_usuario,
+        token: dataStorage[0]?.token,
+      });
+  
+      console.log('Viajes obtenidos del servidor:', viajesResponse.data);
+  
+      // Filtrar viajes activos
+      const viajesActivos = viajesResponse.data.filter((viaje: any) => viaje.id_estado === 1);
+      console.log('Viajes filtrados (estado 1):', viajesActivos);
+  
+      if (viajesActivos.length > 0) {
+        const navigationExtras: NavigationExtras = {
+          queryParams: { email: this.email },
+          state: { viajes: viajesActivos },
+        };
+        this.router.navigate(['/ver-viaje'], navigationExtras);
+      } else {
+        this.popAlertNoViajes();
+      }
+    } catch (error) {
+      console.error('Error al cargar los viajes:', error);
+      alert('Hubo un error al cargar tus viajes. Por favor, inténtalo de nuevo.');
     }
   }
- /* async goToVerViajes() {
-    const navigationExtras: NavigationExtras = {
-      queryParams: { email: this.email }
-    };
-    this.router.navigate(['/ver-viaje'], navigationExtras);
-  }*/
+  
+  async ActualizarViajes() {
+    try {
+      const dataStorage = await this.storage.obtenerStorage();
+      const token = dataStorage[0]?.token;
+  
+      if (!this.usuario || this.usuario.length === 0) {
+        console.error('Usuario no cargado. Redirigiendo al login.');
+        this.router.navigateByUrl('/login');
+        return;
+      }
+  
+      const viajesResponse = await this.apiservice.obtenerViaje({
+        p_id_usuario: this.usuario[0]?.id_usuario,
+        token,
+      });
+  
+      if (!viajesResponse || !viajesResponse.data) {
+        throw new Error('No se pudo obtener la lista de viajes.');
+      }
+  
+      this.viajes = viajesResponse.data || [];
+  
+      console.log('Datos de viajes antes de filtrar:', this.viajes);
+  
+      const viaje = this.viajes.find((v: any) => v.id_estado === 1); // Estado 1 para viaje activo
+      console.log('Viaje filtrado con estado 1:', viaje);
+  
+      if (!viaje) {
+        alert('No hay viajes con estado 1 disponibles para actualizar.');
+        return;
+      }
+  
+      const body: bodyActualizarViaje = {
+        p_id_estado: 3, // Cambiar el estado a 3 (finalizado)
+        p_id: viaje.id_viaje.toString(), // ID del viaje
+        token,
+      };
+  
+      console.log('Cuerpo de la solicitud de actualización:', body);
+  
+      this.apiservice.ActualizarViaje(body.p_id_estado, +body.p_id, body).subscribe(
+        (response: any) => {
+          console.log('Estado actualizado con éxito:', response);
+          alert('El estado del viaje se actualizó correctamente a 3.');
+          this.cargarViajes(); // Recargar viajes después de la actualización
+        },
+        (error: any) => {
+          console.error('Error al actualizar el estado del viaje:', error);
+          alert('Hubo un error al actualizar el estado del viaje.');
+        }
+      );
+    } catch (error) {
+      console.error('Error en ActualizarViajes:', error);
+      alert('No se pudo actualizar el estado del viaje.');
+    }
+  }
+  
 }

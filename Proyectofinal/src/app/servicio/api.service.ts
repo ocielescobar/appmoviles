@@ -155,21 +155,37 @@ export class ApiService {
     }
 }
 
-  async obtenerViaje(data: dataGetViaje){
-    try {
-      const params = {
-        p_id_usuario: data.p_id_usuario,
-        token: data.token
-      };
-        const response = await lastValueFrom(
-        this.http.get<any>(environment.apiUrl + 'viaje/obtener', {params})
-      );
-      return response;
-    } catch (error) {
-      throw error;
+async obtenerViaje(data: { p_id_usuario: number; token: string }) {
+  try {
+    const params = {
+      p_id_usuario: data.p_id_usuario.toString(),
+      token: data.token,
+    };
+
+    console.log('Parámetros enviados al servidor:', params);
+
+    return await lastValueFrom(
+      this.http.get<any>(`${this.apiURL}viaje/obtener`, { params })
+    );
+  } catch (error) {
+    console.error('Error en obtenerViaje:', error);
+
+    // Verificar si el error tiene una propiedad 'status'
+    if (error instanceof HttpErrorResponse && error.status === 400) {
+      throw new Error('Solicitud inválida: Verifica los parámetros enviados.');
     }
+
+    // Manejar otros tipos de errores
+    throw new Error('Ocurrió un error inesperado. Por favor, inténtalo de nuevo.');
   }
-  
+}
+
+ActualizarViaje(p_id_estado: number, p_id: number, data: bodyActualizarViaje): Observable<any> {
+  return this.http.post<any>(
+    `${this.apiURL}viaje/actualiza_estado_viaje`,
+    data
+  );
+}
 }
 
 interface bodyUser{
@@ -210,4 +226,10 @@ interface crearViaje{
 interface dataGetViaje{
   p_id_usuario: number;
   token: string;
+}
+
+export interface bodyActualizarViaje{
+    p_id_estado: number;
+    p_id: string;
+    token: string;
 }

@@ -24,9 +24,26 @@ export class VerViajePage implements OnInit {
   }
 
   ngOnInit() {
-    this.cargarUsuario();
+    const navigation = this.router.getCurrentNavigation();
+  
+    if (navigation?.extras?.state?.['viajes']) {
+      this.viajes = navigation.extras.state['viajes'];
+      console.log('Viajes cargados en ver-viaje:', this.viajes);
+    } else {
+      console.error('No se encontraron viajes en el estado de la navegación.');
+      this.viajes = [];
+      this.popAlertNoViajes(); // Mostrar alerta si no hay viajes
+    }
   }
-
+  
+  async popAlertNoViajes(){
+    const alert = await this.alertController.create({
+      header:'Error',
+      message:"Sin viajes registrados",
+      buttons:['Ok']
+    })
+    await alert.present();
+  }
 
   async cargarUsuario(){
     let datastorage = await this.storage.obtenerStorage();
